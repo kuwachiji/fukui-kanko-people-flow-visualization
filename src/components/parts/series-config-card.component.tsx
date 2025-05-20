@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -66,9 +74,25 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
           />
           <span>表示する</span>
         </label>
-        <Button variant="destructive" size="icon" onClick={onRemoveClick}>
-          <TrashIcon size="medium" />
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="destructive" size="icon">
+              <TrashIcon size="medium" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex justify-center">
+                系統名"{series.name ?? defaultSeriesName(series)}"のグラフを削除しますか？
+              </DialogTitle>
+              <DialogDescription className="flex justify-center">
+                <Button className="transition-all" variant="destructive" onClick={onRemoveClick}>
+                  削除する
+                </Button>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
       <div>
         <span>系統名</span>
