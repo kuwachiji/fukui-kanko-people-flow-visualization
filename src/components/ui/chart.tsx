@@ -209,6 +209,7 @@ const ChartTooltipContent = React.forwardRef<
 
         <div className="grid gap-1.5">
           {payload
+            .slice().reverse()
             .filter((item) => (payload.length < 10 ? true : item.value !== 0))
             .map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`
