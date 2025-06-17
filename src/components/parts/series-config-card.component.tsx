@@ -74,6 +74,26 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
     setTempGraphType(series.graphType);
   }, [series.id]);
 
+  // 「表示する」チェックボックスの変更ハンドラ
+  const handleShowChange = (v: boolean) => {
+    notify(updateSeriesProperty(["show", !!v], series));
+  };
+
+  // 系統名入力の変更ハンドラ
+  const handleNameChange = (v: React.ChangeEvent<HTMLInputElement>) => {
+    notify(updateSeriesProperty(["name", v.target.value ? v.target.value : undefined], series));
+  };
+
+  // 設置場所変更のハンドラ
+  const handlePlacementChange = (v: Placement) => {
+    notify(updateSeriesProperty(["placement", v], series));
+  };
+
+  // 検出対象（objectClass）変更のハンドラ
+  const handleObjectClassChange = (v: ObjectClass) => {
+    notify(updateSeriesProperty(["objectClass", v], series));
+  };
+
   // 属性選択時にまとめて更新
   const handleAttributeChange = (v: ObjectClassAttribute) => {
     notify({
@@ -99,11 +119,7 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
     <Card className="flex w-full flex-col gap-y-4 p-4">
       <div className="flex justify-between">
         <label className="flex flex-row items-center gap-x-2">
-          <Checkbox
-            onCheckedChange={(v) => notify(updateSeriesProperty(["show", !!v], series))}
-            className="block"
-            checked={series.show}
-          />
+          <Checkbox onCheckedChange={handleShowChange} className="block" checked={series.show} />
           <span>表示する</span>
         </label>
         <Dialog>
@@ -137,20 +153,13 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
         <span>系統名</span>
         <Input
           defaultValue={series.name}
-          onChange={(v) =>
-            notify(
-              updateSeriesProperty(["name", v.target.value ? v.target.value : undefined], series),
-            )
-          }
+          onChange={handleNameChange}
           placeholder={defaultSeriesName(series)}
         />
       </div>
       <div>
         <span>設置場所</span>
-        <Select
-          onValueChange={(v: Placement) => notify(updateSeriesProperty(["placement", v], series))}
-          defaultValue={series.placement}
-        >
+        <Select onValueChange={handlePlacementChange} defaultValue={series.placement}>
           <SelectTrigger
             className={cn(
               `${series.placement !== undefined ? "text-foreground" : "text-gray-500"}`,
@@ -174,9 +183,7 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
           // 設置場所が未設定なら検出対象は選択できない
           disabled={!series.placement}
           defaultValue={series.objectClass}
-          onValueChange={(v: ObjectClass) =>
-            notify(updateSeriesProperty(["objectClass", v], series))
-          }
+          onValueChange={handleObjectClassChange}
         >
           <SelectTrigger
             className={cn(
