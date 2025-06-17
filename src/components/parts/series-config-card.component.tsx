@@ -40,7 +40,7 @@ import {
 } from "@/interfaces/graph-series.interface";
 import { Placement, PLACEMENTS } from "@/interfaces/placement.interface";
 import { cn } from "@/lib/utils";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { TrashIcon } from "@primer/octicons-react";
 
 interface Props {
@@ -68,6 +68,33 @@ function updateSeriesProperty<Key extends keyof GraphSeries>(
 }
 
 export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
+  const [tempGraphType, setTempGraphType] = useState<GraphType>(series.graphType);
+  // seriesが切り替わったときは一時状態もリセット
+  useEffect(() => {
+    setTempGraphType(series.graphType);
+  }, [series.id]);
+
+  // 属性選択時にまとめて更新
+  const handleAttributeChange = (v: ObjectClassAttribute) => {
+    notify({
+      ...series,
+      graphType: tempGraphType,
+      focusedAttribute: v,
+    });
+  };
+
+  // ラジオボタン変更時は一時状態のみ更新
+  const handleGraphTypeChange = (selectedGraphType: GraphType) => {
+    setTempGraphType(selectedGraphType);
+    // simple の場合は即時反映
+    if (selectedGraphType === "simple") {
+      notify({
+        ...series,
+        graphType: selectedGraphType,
+        focusedAttribute: undefined,
+      });
+    }
+  };
   return (
     <Card className="flex w-full flex-col gap-y-4 p-4">
       <div className="flex justify-between">
@@ -174,10 +201,8 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
           <div>
             <span>グラフ種類</span>
             <RadioGroup
-              value={series.graphType}
-              onValueChange={(v: GraphType) =>
-                notify(updateSeriesProperty(["graphType", v], series))
-              }
+              value={tempGraphType}
+              onValueChange={handleGraphTypeChange}
               className="mt-2 pl-2"
             >
               {Object.entries(GRAPH_TYPES).map(([graphType, graphTypeText]) => (
@@ -187,14 +212,12 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
                     <Label htmlFor={`${series.id}-${graphType}`}>{graphTypeText}</Label>
                   </div>
                   {graphType !== "simple" &&
-                  graphType === series.graphType &&
+                  graphType === tempGraphType &&
                   series.objectClass !== undefined &&
                   series.objectClass !== "Person" ? (
                     <Select
                       key={graphType}
-                      onValueChange={(v: ObjectClassAttribute) =>
-                        notify(updateSeriesProperty(["focusedAttribute", v], series))
-                      }
+                      onValueChange={handleAttributeChange}
                       defaultValue={series.focusedAttribute}
                     >
                       <SelectTrigger
