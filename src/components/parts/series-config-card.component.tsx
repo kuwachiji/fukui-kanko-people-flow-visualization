@@ -86,11 +86,13 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
 
   // 設置場所変更のハンドラ
   const handlePlacementChange = (v: Placement) => {
+    setTempGraphType("simple");
     notify(updateSeriesProperty(["placement", v], series));
   };
 
   // 検出対象（objectClass）変更のハンドラ
   const handleObjectClassChange = (v: ObjectClass) => {
+    setTempGraphType("simple");
     notify(updateSeriesProperty(["objectClass", v], series));
   };
 
