@@ -87,11 +87,11 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
   const handleGraphTypeChange = (selectedGraphType: GraphType) => {
     setTempGraphType(selectedGraphType);
     // simple の場合は即時反映
-    if (selectedGraphType === "simple") {
+    if (selectedGraphType === "simple" || series.focusedAttribute !== undefined) {
       notify({
         ...series,
         graphType: selectedGraphType,
-        focusedAttribute: undefined,
+        focusedAttribute: selectedGraphType === "simple" ? undefined : series.focusedAttribute,
       });
     }
   };
