@@ -105,10 +105,10 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
     });
   };
 
-  // ラジオボタン変更時は一時状態のみ更新
+  // ラジオボタン変更時の処理
   const handleGraphTypeChange = (selectedGraphType: GraphType) => {
     setTempGraphType(selectedGraphType);
-    // simple の場合は即時反映
+    // 単純棒グラフ選択時や、属性選択後は即時反映
     if (selectedGraphType === "simple" || series.focusedAttribute !== undefined) {
       notify({
         ...series,
@@ -154,14 +154,14 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
       <div>
         <span>系統名</span>
         <Input
-          defaultValue={series.name}
+          value={series.name ?? ""}
           onChange={handleNameChange}
           placeholder={defaultSeriesName(series)}
         />
       </div>
       <div>
         <span>設置場所</span>
-        <Select onValueChange={handlePlacementChange} defaultValue={series.placement}>
+        <Select onValueChange={handlePlacementChange} value={series.placement}>
           <SelectTrigger
             className={cn(
               `${series.placement !== undefined ? "text-foreground" : "text-gray-500"}`,
@@ -184,7 +184,7 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
           key={series.placement}
           // 設置場所が未設定なら検出対象は選択できない
           disabled={!series.placement}
-          defaultValue={series.objectClass}
+          value={series.objectClass}
           onValueChange={handleObjectClassChange}
         >
           <SelectTrigger
@@ -227,7 +227,7 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
                     <Select
                       key={graphType}
                       onValueChange={handleAttributeChange}
-                      defaultValue={series.focusedAttribute}
+                      value={series.focusedAttribute}
                     >
                       <SelectTrigger
                         className={cn(
