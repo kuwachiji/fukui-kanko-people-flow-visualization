@@ -174,7 +174,7 @@ export function SeriesConfigCard({ series, notify, onRemoveClick }: Props) {
           <div>
             <span>グラフ種類</span>
             <RadioGroup
-              defaultValue={series.graphType}
+              value={series.graphType}
               onValueChange={(v: GraphType) =>
                 notify(updateSeriesProperty(["graphType", v], series))
               }
